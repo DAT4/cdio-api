@@ -28,7 +28,8 @@ def extractCornor(card):
 
 def saveCornor(cornor):
     card = input("Card ID: ")
-    cv.imwrite(f"Resources/{card}.png",cornor)
+    cv.imwrite(f"saved/{card}.png",cornor)
+
 
 def findCard(img):
     gray = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
@@ -49,12 +50,13 @@ def findCard(img):
             result = extractCard(aprox,img)
             cornor = extractCornor(result)
 
-            cv.imshow(f"Cornor{s}", cornor)
+            #cv.imshow(f"Cornor{s}", cornor)
+            compareImg(cornor)
             #saveCornor(cornor)
-            cv.imshow(f"Perspective{s}",result)
-            cv.drawContours(img,[aprox],-1,(0,255,0),2)
+            #cv.imshow(f"Perspective{s}",result)
+            #cv.drawContours(img,[aprox],-1,(0,255,0),2)
 
-    cv.imshow("Video",img)
+    #cv.imshow("Video",img)
 
 def useWebCam():
     cap = cv.VideoCapture(0)
@@ -68,6 +70,7 @@ def useWebCam():
         if cv.waitKey(1) & 0xFF == ord('q'):
             break
 
+
 def useImage(imagePath):
     img = cv.imread(imagePath)
     print('hello image inside')
@@ -75,10 +78,33 @@ def useImage(imagePath):
     cv.waitKey()
     cv.destroyAllWindows()
 
+
 def compareImg(img):
-    h4 = cv.imread("Resources/1.png")
-    h4 = cv.resize(h4,(70,24))
-    #Do compare logic
+    #NOTE: Find out how to make image array into binary format
+
+    fourofhearts = cv.imread("saved/fourofhearts.png")
+    fourofhearts = cv.cvtColor(fourofhearts, cv.COLOR_RGB2GRAY)
+
+    aceofspace = cv.imread("saved/aceofspace.png")
+    aceofspace = cv.cvtColor(aceofspace, cv.COLOR_RGB2GRAY)
+
+    bit1 = cv.bitwise_xor(img, aceofspace)
+    bit2 = cv.bitwise_xor(img, fourofhearts)
+
+    cv.imshow('bit1', bit1)
+    cv.imshow('bit2', bit2)
+
+    print(true(bit1))
+    print(true(bit2))
+
+
+def true(img):
+    out = 0 
+    for x in img:
+        for y in x:
+            if y != 0:
+                out += 1
+    return out
 
 if __name__ == '__main__':
     useImage('ace.jpg')
