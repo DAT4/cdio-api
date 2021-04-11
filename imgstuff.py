@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
 import imutils as util
+import database
 
 def extractCard(aprox,img):
     pts1 = aprox.reshape(4, 2)
@@ -27,8 +28,9 @@ def extractCornor(card):
 
 
 def saveCornor(cornor):
-    card = input("Card ID: ")
-    cv.imwrite(f"saved/{card}.png",cornor)
+    sym = input("SYMBOL: ")
+    num = input("NUMBER: ")
+    database.save_img(num, sym, cornor)
 
 
 def findCard(img):
@@ -50,7 +52,7 @@ def findCard(img):
             result = extractCard(aprox,img)
             cornor = extractCornor(result)
 
-            #cv.imshow(f"Cornor{s}", cornor)
+            cv.imshow(f"Cornor{s}", cornor)
             compareImg(cornor)
             #saveCornor(cornor)
             #cv.imshow(f"Perspective{s}",result)
@@ -82,20 +84,19 @@ def useImage(imagePath):
 def compareImg(img):
     #NOTE: Find out how to make image array into binary format
 
-    fourofhearts = cv.imread("saved/fourofhearts.png")
-    fourofhearts = cv.cvtColor(fourofhearts, cv.COLOR_RGB2GRAY)
+    #fourofhearts = cv.imread("saved/fourofhearts.png")
+    #fourofhearts = cv.cvtColor(fourofhearts, cv.COLOR_RGB2GRAY)
 
-    aceofspace = cv.imread("saved/aceofspace.png")
-    aceofspace = cv.cvtColor(aceofspace, cv.COLOR_RGB2GRAY)
+    #aceofspace = cv.imread("saved/aceofspace.png")
+    #aceofspace = cv.cvtColor(aceofspace, cv.COLOR_RGB2GRAY)
 
-    bit1 = cv.bitwise_xor(img, aceofspace)
-    bit2 = cv.bitwise_xor(img, fourofhearts)
-
-    cv.imshow('bit1', bit1)
-    cv.imshow('bit2', bit2)
-
-    print(true(bit1))
-    print(true(bit2))
+    for card in database.get_all():
+        image = card['image']
+        image = cv.cvtColor(image, cv.COLOR_GRAY2BGR)
+        image = cv.cvtColor(image, cv.COLOR_RGB2GRAY)
+        bit = cv.bitwise_xor(img, image)
+        cv.imshow('bit', bit)
+        print(true(bit))
 
 
 def true(img):
