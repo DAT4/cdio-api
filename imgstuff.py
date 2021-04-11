@@ -28,6 +28,7 @@ def extractCornor(card):
 
 
 def findCard(img):
+    '''Will find the squares in the full image and extract a single card'''
     gray = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
     squere = cv.Canny(gray,150,150)
     k = np.ones([2,2],np.uint8)
@@ -61,12 +62,16 @@ def findWhitePixels(img):
                 out += 1
     return out
 
-
-if __name__ == '__main__':
-    img = cv.imread('ace.jpg')
+def showCard(path):
+    img = cv.imread(path)
     card = findCard(img)
-    cv.imshow('card', card)
+    cv.imshow(f'card {path}', card)
     cornor = extractCornor(card)
-    cv.imshow('corner', cornor)
+    cv.imshow(f'corner {path}', cornor)
+
+def done():
     cv.waitKey()
     cv.destroyAllWindows()
+
+if __name__ == '__main__':
+    showCard('resources/imge.jpg')
