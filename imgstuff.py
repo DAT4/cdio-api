@@ -27,12 +27,6 @@ def extractCornor(card):
     return cornor
 
 
-def saveCornor(cornor):
-    sym = input("SYMBOL: ")
-    num = input("NUMBER: ")
-    database.save_img(num, sym, cornor)
-
-
 def findCard(img):
     gray = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
     squere = cv.Canny(gray,150,150)
@@ -42,64 +36,24 @@ def findCard(img):
     see = cv.findContours(squere.copy(),cv.RETR_LIST,cv.CHAIN_APPROX_SIMPLE)
     see = util.grab_contours(see)
     see = sorted(see,key=cv.contourArea,reverse=True)[:3]
-
     for s in see:
         lnked = cv.arcLength(s,True)
         aprox = cv.approxPolyDP(s,0.02*lnked,True)
-
         if len(aprox) == 4:
-
-            result = extractCard(aprox,img)
-            cornor = extractCornor(result)
-
-            cv.imshow(f"Cornor{s}", cornor)
-            compareImg(cornor)
-            #saveCornor(cornor)
-            #cv.imshow(f"Perspective{s}",result)
-            #cv.drawContours(img,[aprox],-1,(0,255,0),2)
-
-    #cv.imshow("Video",img)
-
-def useWebCam():
-    cap = cv.VideoCapture(0)
-    cap.set(3,640)
-    cap.set(4,480)
-    cap.set(10,100)
-
-    while True:
-        success, img = cap.read()
-        findCard(img)
-        if cv.waitKey(1) & 0xFF == ord('q'):
-            break
-
-
-def useImage(imagePath):
-    img = cv.imread(imagePath)
-    print('hello image inside')
-    findCard(img)
-    cv.waitKey()
-    cv.destroyAllWindows()
+            return extractCard(aprox,img)
 
 
 def compareImg(img):
-    #NOTE: Find out how to make image array into binary format
-
-    #fourofhearts = cv.imread("saved/fourofhearts.png")
-    #fourofhearts = cv.cvtColor(fourofhearts, cv.COLOR_RGB2GRAY)
-
-    #aceofspace = cv.imread("saved/aceofspace.png")
-    #aceofspace = cv.cvtColor(aceofspace, cv.COLOR_RGB2GRAY)
-
     for card in database.get_all():
         image = card['image']
         image = cv.cvtColor(image, cv.COLOR_GRAY2BGR)
         image = cv.cvtColor(image, cv.COLOR_RGB2GRAY)
         bit = cv.bitwise_xor(img, image)
         cv.imshow('bit', bit)
-        print(true(bit))
+        print(whitePixels(bit))
 
 
-def true(img):
+def findWhitePixels(img):
     out = 0 
     for x in img:
         for y in x:
@@ -107,7 +61,12 @@ def true(img):
                 out += 1
     return out
 
-if __name__ == '__main__':
-    useImage('ace.jpg')
-    #useWebCam()
 
+if __name__ == '__main__':
+    img = cv.imread('ace.jpg')
+    card = findCard(img)
+    cv.imshow('card', card)
+    cornor = extractCornor(card)
+    cv.imshow('corner', cornor)
+    cv.waitKey()
+    cv.destroyAllWindows()
