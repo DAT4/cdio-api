@@ -1,7 +1,9 @@
+import os
 import cv2 as cv
 import numpy as np
 import imutils as util
 import database
+import uuid
 
 def extractCard(aprox,img):
     pts1 = aprox.reshape(4, 2)
@@ -21,7 +23,7 @@ def extractCard(aprox,img):
     
 
 def extractCornor(card):
-    cornor = card[0:70,1:25]
+    cornor = card[0:80,1:25]
     cornor = cv.cvtColor(cornor,cv.COLOR_RGB2GRAY)
     _, cornor = cv.threshold(cornor, 0, 255, cv.THRESH_OTSU | cv.THRESH_BINARY_INV)
     return cornor
@@ -43,17 +45,6 @@ def findCard(img):
         if len(aprox) == 4:
             return extractCard(aprox,img)
 
-
-def compareImg(img):
-    for card in database.get_all():
-        image = card['image']
-        image = cv.cvtColor(image, cv.COLOR_GRAY2BGR)
-        image = cv.cvtColor(image, cv.COLOR_RGB2GRAY)
-        bit = cv.bitwise_xor(img, image)
-        cv.imshow('bit', bit)
-        print(whitePixels(bit))
-
-
 def findWhitePixels(img):
     out = 0 
     for x in img:
@@ -62,16 +53,62 @@ def findWhitePixels(img):
                 out += 1
     return out
 
-def showCard(path):
-    img = cv.imread(path)
+def compareImg(img):
+    for card in database.get_all():
+        image = card['image']
+        image = cv.cvtColor(image, cv.COLOR_GRAY2BGR)
+        image = cv.cvtColor(image, cv.COLOR_RGB2GRAY)
+        bit = cv.bitwise_xor(img, image)
+        cv.imshow('bit', bit)
+        print(findWhitePixels(bit))
+
+
+
+def showCard(img):
     card = findCard(img)
-    cv.imshow(f'card {path}', card)
+    #cv.imshow(f'{uuid.uuid4()} card', card)
     cornor = extractCornor(card)
-    cv.imshow(f'corner {path}', cornor)
+    cv.imshow(f'{uuid.uuid4()} corner', cornor)
 
 def done():
     cv.waitKey()
     cv.destroyAllWindows()
 
+def divideDeckAndSaveToDB():
+    #This function is used to divide a deck of card into separate cards
+    img = cv.imread('deck.png')
+    w = 390
+    h = 570
+    b = 15
+
+    sym = ['spade', 'heart', 'diamond', 'clubs']
+    num = ['ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'knight', 'queen', 'king',]
+
+    for i in range(4):
+        for j in range(13):
+            corner = extractCornor(findCard(img[b+i*h:b+i*h+h,b+j*w:b+j*w+w]))
+            database.save_img(
+                num[j],
+                sym[i],
+                corner
+                )
+
+
+def testShowDB():
+    #Wrong cards in database
+    for card in database.get_all():
+        cv.imshow('hej',card['image'])
+        done()
+
+def testCompare():
+    for path in os.listdir('resources'):
+        img = cv.imread(f'resources/{path}')
+        card = findCard(img)
+        if card is not None:
+            corner = extractCornor(card)
+            compareImg(corner)
+            done()
+
 if __name__ == '__main__':
-    showCard('resources/imge.jpg')
+    testCompare()
+

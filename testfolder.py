@@ -6,7 +6,7 @@ if __name__ == '__main__':
     for x in x:
         print(x)
         try:
-            imgstuff.showCard(x)
+            imgstuff.showCard(f'resources/{x}')
         except:
             print('error')
     imgstuff.done()
