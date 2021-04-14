@@ -43,7 +43,9 @@ def findCard(img):
         lnked = cv.arcLength(s,True)
         aprox = cv.approxPolyDP(s,0.02*lnked,True)
         if len(aprox) == 4:
+            print('found card')
             return extractCard(aprox,img)
+
 
 def findWhitePixels(img):
     out = 0 
@@ -53,8 +55,10 @@ def findWhitePixels(img):
                 out += 1
     return out
 
+
 def compareImg(img):
     for card in database.get_all():
+        print(card['symbol'],card['number'])
         image = card['image']
         image = cv.cvtColor(image, cv.COLOR_GRAY2BGR)
         image = cv.cvtColor(image, cv.COLOR_RGB2GRAY)
@@ -63,16 +67,17 @@ def compareImg(img):
         print(findWhitePixels(bit))
 
 
-
 def showCard(img):
     card = findCard(img)
-    #cv.imshow(f'{uuid.uuid4()} card', card)
+    cv.imshow(f'{uuid.uuid4()} card', card)
     cornor = extractCornor(card)
     cv.imshow(f'{uuid.uuid4()} corner', cornor)
+
 
 def done():
     cv.waitKey()
     cv.destroyAllWindows()
+
 
 def divideDeckAndSaveToDB():
     #This function is used to divide a deck of card into separate cards
@@ -100,6 +105,7 @@ def testShowDB():
         cv.imshow('hej',card['image'])
         done()
 
+
 def testCompare():
     for path in os.listdir('resources'):
         img = cv.imread(f'resources/{path}')
@@ -109,6 +115,23 @@ def testCompare():
             compareImg(corner)
             done()
 
+
+def testSave(name):
+    img = cv.imread(f'uploads/{name}')
+    img = cv.resize(img, (0, 0), fx=0.2, fy=0.2)
+    card = findCard(img)
+    return extractCornor(card)
+
+
+def testUploads():
+    corners = []
+    for path in os.listdir('uploads'):
+        corners.append(testSave(f'{path}'))
+    for corner in corners:
+        print('-'*40)
+        compareImg(corner)
+
+
 if __name__ == '__main__':
-    testCompare()
+    testUploads()
 
