@@ -1,23 +1,8 @@
 import requests
+import cv2 as cv
 
-url = 'http://localhost:8000/'
-r = requests.get(url)
-print(r)
+#Upload image
+url = 'http://localhost:8000/upload'
+files= {'file': ('image.jpg',open('ace.jpg', 'rb'),'image/jpg',)}
+r = requests.post(url, files=files)
 print(r.text)
-
-url = 'http://localhost:8000/upload/'
-
-headers = {
-    'accept': 'application/json',
-    'Content-Type': 'multipart/form-data',
-}
-
-
-files = {
-    'file': ('ace.jpg', open('../ace.jpg', 'rb'),'image/jpg'),
-}
-
-r = requests.post('http://localhost:8000/upload/', headers=headers, files=files)
-
-print(r)
-
