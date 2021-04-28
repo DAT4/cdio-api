@@ -1,11 +1,12 @@
-FROM python:3.8
+FROM python:3
 
-WORKDIR /api
+RUN apt-get update
+RUN apt-get install libgl1-mesa-glx -y
 
-COPY requirements.txt .
+RUN pip install opencv-python imutils uvicorn fastapi python-multipart
 
-RUN pip install -r requirements.txt
+EXPOSE 80
 
-COPY ./app ./app
+COPY ./app /app
 
-CMD ["python", "./app/main.py"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"] 
