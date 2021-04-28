@@ -1,4 +1,5 @@
 import os
+import io
 import cv2 as cv
 import numpy as np
 import imutils as util
@@ -116,11 +117,14 @@ def testCompare():
             done()
 
 
-def testSave(name):
-    img = cv.imread(f'uploads/{name}')
-    img = cv.resize(img, (0, 0), fx=0.2, fy=0.2)
+def test():
+    img = cv.imread(f'../ace.jpg')
+    showCard(img)
+    done()
+    #img = cv.resize(img, (0, 0), fx=0.2, fy=0.2)
     card = findCard(img)
     return extractCornor(card)
+
 
 
 def testUploads():
@@ -131,12 +135,20 @@ def testUploads():
         print('-'*40)
         compareImg(corner)
 
-def fromTmpFile(file):
-    img = cv.imdecode(np.frombuffer(file, np.uint8), -1)
-    cv.imshow('hej', img)
+
+def load(file):
+    img = np.asarray(bytearray(file.read()), dtype="uint8")
+    img = cv.imdecode(img, cv.IMREAD_COLOR)
+    return extractCornor(findCard(img))
+
+
+def save(img):
+    is_success, buffer = cv.imencode(".jpg", img)
+    return io.BytesIO(buffer)
+
 
 
 
 if __name__ == '__main__':
-    pass
+    test()
 
