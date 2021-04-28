@@ -2,7 +2,7 @@ from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-import uvicorn, imgstuff
+from .imgstf import edge as im
 
 app = FastAPI()
 
@@ -19,10 +19,5 @@ app.add_middleware(
 
 @app.post('/upload/')
 async def upload(file: UploadFile = File(...)):
-    img = imgstuff.save(imgstuff.load(file.file))
+    img = im.save(im.load(file.file))
     return StreamingResponse(img, media_type='image/jpg')
-
-
-if __name__ == '__main__':
-    uvicorn.run(app)
-
