@@ -30,7 +30,11 @@ def extractCornor(card):
     cv.waitKey(0)
     cornor = cv.cvtColor(cornor,cv.COLOR_RGB2GRAY)
     _, cornor = cv.threshold(cornor, 0, 255, cv.THRESH_OTSU | cv.THRESH_BINARY_INV)
-    return cornor
+
+    top = cornor[:40]
+    bottom = cornor[40:]
+
+    return top, bottom
 
 
 def find_card(img):

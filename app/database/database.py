@@ -4,22 +4,38 @@ from pymongo import MongoClient
 from bson.binary import Binary
 
 cli = MongoClient('mongodb://mongo:27017')
-col = cli['cdio']['images']
+COL_SYM = cli['cdio']['symbols']
+COL_NUM = cli['cdio']['numbers']
 
-def save_img(num, sym, img):
-    img = Binary(pickle.dumps( img, protocol=2), subtype=128)
-    res = col.insert_one({
-            'number': num,
+def save_symbol(sym, name):
+    sym = Binary(pickle.dumps( sym, protocol=2), subtype=128)
+    res = COL_SYM.insert_one({
             'symbol': sym,
-            'image': img,
+            'name': name,
             })
     print('Response', res.inserted_id)
 
-def get_all():
+def save_number(num, name):
+    num = Binary(pickle.dumps( num, protocol=2), subtype=128)
+    res = COL_NUM.insert_one({
+            'number': num,
+            'name': name,
+            })
+    print('Response', res.inserted_id)
+
+
+def get_all_nums():
     out = []
-    res = col.find()
-    for x in res:
-        x['image'] = pickle.loads(x['image'])
+    res_num = COL_NUM.find()
+    for x in res_num:
+        x['number'] = pickle.loads(x['number'])
         out.append(x)
     return out
 
+def get_all_syms():
+    out = []
+    res_sym = COL_SYM.find()
+    for x in res_sym:
+        x['symbol'] = pickle.loads(x['symbol'])
+        out.append(x)
+    return out
