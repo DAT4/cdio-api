@@ -1,6 +1,7 @@
 import os
 import database.database as db
 import uuid
+import cv2 as cv
 
 #TODO refactor 
 
