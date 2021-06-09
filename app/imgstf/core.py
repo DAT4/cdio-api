@@ -24,6 +24,10 @@ def extractCard(aprox,img):
 
 def extractCornor(card):
     cornor = card[0:80,0:30]
+    top = cornor[:40]
+    bot = cornor[40:]
+    cv.imshow('img', bot)
+    cv.waitKey(0)
     cornor = cv.cvtColor(cornor,cv.COLOR_RGB2GRAY)
     _, cornor = cv.threshold(cornor, 0, 255, cv.THRESH_OTSU | cv.THRESH_BINARY_INV)
     return cornor
@@ -52,6 +56,15 @@ def splitstuff(img):
     w = 560
     h = 800
     b = 15
-    cards = [img[b+i*h:b+i*h+h,b+j*w:b+j*w+w] for i in range(2) for j in range(7)]
-    cards = [find_card(x) for x in cards[:8] + cards[10:]]
-    return [extractCornor(x) for x in cards]
+    cards = [img[b+i*h:b+i*h+h,b+j*w:b+j*w+w] 
+            for i in range(2) 
+            for j in range(7)]
+
+    cards = [find_card(x) 
+            for x in cards[:8] + cards[10:]]
+
+    return [extractCornor(x) 
+            for x in cards]
+
+img = cv.imread('img.jpg')
+splitstuff(img)
