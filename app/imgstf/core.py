@@ -24,9 +24,19 @@ def extractCard(aprox,img):
 
 def extractCornor(card):
     cornor = card[0:80,0:30]
-    cornor = cv.cvtColor(cornor,cv.COLOR_RGB2GRAY)
-    _, cornor = cv.threshold(cornor, 0, 255, cv.THRESH_OTSU | cv.THRESH_BINARY_INV)
-    return cornor
+
+    top = cornor[:40]
+    top = cv.cvtColor(top,cv.COLOR_BAYER_BG2BGR)
+    _, top = cv.threshold(top, 0, 255, cv.THRESH_OTSU | cv.THRESH_BINARY_INV)
+
+    bottom = cornor[40:]
+    bottom = cv.cvtColor(bottom,cv.COLOR_BAYER_BG2BGR)
+    _, bottom = cv.threshold(bottom, 0, 255, cv.THRESH_OTSU | cv.THRESH_BINARY_INV)
+
+    splitCornor = [top,bottom]
+    #cornor = cv.cvtColor(cornor,cv.COLOR_RGB2GRAY)
+    #_, cornor = cv.threshold(cornor, 0, 255, cv.THRESH_OTSU | cv.THRESH_BINARY_INV)
+    return splitCornor
 
 
 def find_card(img):
