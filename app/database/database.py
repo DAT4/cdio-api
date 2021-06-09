@@ -3,7 +3,7 @@ import pickle
 from pymongo import MongoClient
 from bson.binary import Binary
 
-cli = MongoClient('mongodb://mongo.lan:27017')
+cli = MongoClient('mongodb://mongo:27017')
 col = cli['cdio']['images']
 
 def save_img(num, sym, img):
