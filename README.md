@@ -24,3 +24,9 @@ Other endpoints could be made for debugging in the beginning.
 
 + List all cards in the database
 + List all images in the database
+
+## How to test
+
+```sh
+python -m unittest tests.test_core
+```
