@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
 import imutils as util
+import skimage.exposure
 
 #TODO make this object oriented
 
@@ -22,44 +23,35 @@ def extractCard(aprox,img):
     
 
 def extractCornor(card):
-    cornor = card[0:80,1:25]
+    cornor = card[0:80,0:30]
     cornor = cv.cvtColor(cornor,cv.COLOR_RGB2GRAY)
     _, cornor = cv.threshold(cornor, 0, 255, cv.THRESH_OTSU | cv.THRESH_BINARY_INV)
     return cornor
 
 
-def findCard(img):
-    '''Will find the squares in the full image and extract a single card'''
-    gray = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
-    squere = cv.Canny(gray,150,150)
-    #squere = cv.GaussianBlur(squere,(5,5), cv.BORDER_DEFAULT)
-    k = np.ones([2,2],np.uint8)
-    squere = cv.dilate(squere,k,iterations=2)
-
-    see = cv.findContours(squere.copy(),cv.RETR_LIST,cv.CHAIN_APPROX_SIMPLE)
+def find_card(img):
+    gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+    gray = cv.subtract(255,gray)
+    ret,thresh = cv.threshold(gray,75,255,cv.THRESH_TOZERO)
+    kernel1 = cv.getStructuringElement(cv.MORPH_ELLIPSE,(11,11))
+    kernel2 = np.ones((3,3),np.uint8)
+    erosion = cv.erode(thresh,kernel2,iterations = 1)
+    dilation = cv.dilate(erosion,kernel1,iterations = 1)
+    see = cv.findContours(dilation.copy(),cv.RETR_LIST,cv.CHAIN_APPROX_SIMPLE)
     see = util.grab_contours(see)
-    see = sorted(see,key=cv.contourArea,reverse=True)[:14]
+    see = sorted(see,key=cv.contourArea,reverse=True)[1:2]
     for s in see:
         lnked = cv.arcLength(s,True)
         aprox = cv.approxPolyDP(s,0.02*lnked,True)
         if len(aprox) == 4:
             print('found card')
-            im = extractCard(aprox,img)
+            return extractCard(aprox,img)
 
 
 def splitstuff(img):
     w = 560
     h = 800
     b = 15
-
-    sym = ['spade', 'heart', 'diamond', 'clubs']
-    num = ['ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'knight', 'queen', 'king',]
-
-    for i in range(2):
-        for j in range(7):
-            card = img[b+i*h:b+i*h+h,b+j*w:b+j*w+w]
-            cv.imshow(f'{i}{j}',card)
-            cv.waitKey(0)
-
-img = cv.imread('img.jpg')
-splitstuff(img)
+    cards = [img[b+i*h:b+i*h+h,b+j*w:b+j*w+w] for i in range(2) for j in range(7)]
+    cards = [find_card(x) for x in cards[:8] + cards[10:]]
+    return [extractCornor(x) for x in cards]
