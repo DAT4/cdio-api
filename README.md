@@ -1,6 +1,4 @@
 # Playing card recognition 
-hej
-
 This repository has the implementation of a playing card recognition tool, using open CV and python.
 
 The interaction with the tool is done through the REST API interface, which has 2 interfaces so far.
