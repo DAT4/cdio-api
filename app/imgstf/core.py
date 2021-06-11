@@ -70,5 +70,3 @@ def splitstuff(img):
     return [extractCornor(x) 
             for x in cards]
 
-img = cv.imread('img.jpg')
-splitstuff(img)
