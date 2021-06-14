@@ -1,5 +1,5 @@
 from fastapi import FastAPI, File, UploadFile
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from .imgstf import edge as im
@@ -25,8 +25,8 @@ async def upload(file: UploadFile = File(...)):
 @app.post('/board/')
 async def upload(file: UploadFile = File(...)):
     game_state = {
-            'builds':['H2', 'S8', 'SA', 'DK', 'K4', 'D8', 'K10',],
-            'suits':['HA', 'D4', '', '',],
-            'deck':'KJ',
+            'builds':['H2', 'S8', 'S0', 'D13', 'K4', 'D8', 'K10',],
+            'suits':['H0', 'D4', '', '',],
+            'deck':'K11',
             }
     return JSONResponse(content=game_state)
