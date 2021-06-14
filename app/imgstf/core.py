@@ -38,16 +38,11 @@ def extractCornor(card):
 
 
 def find_card(img):
-    gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-    gray = cv.subtract(255,gray)
-    ret,thresh = cv.threshold(gray,75,255,cv.THRESH_TOZERO)
-    kernel1 = cv.getStructuringElement(cv.MORPH_ELLIPSE,(11,11))
-    kernel2 = np.ones((3,3),np.uint8)
-    erosion = cv.erode(thresh,kernel2,iterations = 1)
-    dilation = cv.dilate(erosion,kernel1,iterations = 1)
-    see = cv.findContours(dilation.copy(),cv.RETR_LIST,cv.CHAIN_APPROX_SIMPLE)
+    gray = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
+    _, thresh = cv.threshold(gray, 140, 255, cv.THRESH_BINARY)    
+    see = cv.findContours(image=thresh.copy(), mode=cv.RETR_TREE, method=cv.CHAIN_APPROX_NONE)
     see = util.grab_contours(see)
-    see = sorted(see,key=cv.contourArea,reverse=True)[1:2]
+    see = sorted(see,key=cv.contourArea,reverse=True)[:3]
     for s in see:
         lnked = cv.arcLength(s,True)
         aprox = cv.approxPolyDP(s,0.02*lnked,True)
