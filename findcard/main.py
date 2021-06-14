@@ -1,49 +1,81 @@
-import cv2 as cv
-import numpy as np
 from core import *
+from os import listdir
+import cv2 as cv
+import tkinter as tk
+from tkinter import filedialog, Tk, RIGHT, LEFT, BOTH, RAISED, CENTER
+from tkinter import Text, W, N, E, S, Button
+from tkinter.ttk import Frame, Style, Label
+from PIL import Image, ImageTk
+
+root = Tk()
+root.geometry("400x500")
+root.resizable(width=0, height=0)
+root.title("CDIO - Final Project")
+
+images = None
+index = 0
+path    = filedialog.askdirectory()
+images  = [f'{path}/{x}'for x in listdir(path) if x[-3:] == 'jpg'] 
+
+def go_left(): 
+    global index, images
+    index = (index+1)%len(images)
+    get_image(images[index])
+
+def go_right(): 
+    global index, images
+    index = (index-1)%len(images)
+    print(index)
+    print(images[index])
+    get_image(images[index])
+
+def get_image(path):
+    img     = find_card(get(path))
+    t, b    = extract_cornor(img)
+
+    top = Image.fromarray(t)
+    top = top.resize((100,100), Image.ANTIALIAS)
+    top = ImageTk.PhotoImage(top)
+
+    bot = Image.fromarray(b)
+    bot = bot.resize((100,100), Image.ANTIALIAS)
+    bot = ImageTk.PhotoImage(bot)
+
+    img = Image.fromarray(img)
+    img = img.resize((200,300), Image.ANTIALIAS)
+    img = ImageTk.PhotoImage(img)
+
+    panel1.imgtk = top 
+    panel1.config(image=top)
+    panel2.imgtk = bot 
+    panel2.config(image=bot)
+    panel3.imgtk = img
+    panel3.config(image=img)
 
 
-def recognize(self, img):
-    gray = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
-    thresh = cv.adaptiveThreshold(gray,255,1,1,11,2)
-    contours,_ = cv.findContours(thresh,cv.RETR_LIST,cv.CHAIN_APPROX_SIMPLE)
-    for cnt in contours:
-        if cv.contourArea(cnt)>50:
-            [x,y,w,h] = cv.boundingRect(cnt)
-            if  h>20:
-                cv.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
-                roi = thresh[y:y+h,x:x+w]
-                roismall = cv.resize(roi,(10,10))
-                show(roismall)
-                roismall = roismall.reshape((1,100))
-                roismall = np.float32(roismall)
-                _, results, _, _= model.findNearest(roismall, k = 1)
-                string = str(int((results[0][0])))
-                cv.putText(out,string,(x,y+h),0,1,(0,255,0))
-            return out
+leftbtn     = Button(root, text="<", width=1, height=20, command=go_left)
+rightbtn    = Button(root, text=">", width=1, height=20, command=go_right)
 
-def find_somthing(img):
-    gray = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
-    blur = cv.GaussianBlur(gray,(5,5),0)
-    thresh = cv.adaptiveThreshold(blur,255,1,1,11,2)
-    contours,_ = cv.findContours(thresh,cv.RETR_LIST,cv.CHAIN_APPROX_SIMPLE)
-    for cnt in contours:
-        if cv.contourArea(cnt)>50:
-            [x,y,w,h] = cv.boundingRect(cnt)
-            if  h>20:
-                cv.rectangle(img,(x,y),(x+w,y+h),(0,0,255),2)
-                roi = gray[y:y+h,x:x+w]
-                roismall = cv.resize(roi,(10,10))
-                _, roismall = cv.threshold(roismall, 0, 255, cv.THRESH_OTSU | cv.THRESH_BINARY_INV)
-                return roismall
+oframe      = Frame(root, width=200, height=100)
+uframe      = Frame(oframe, width=200, height=500)
+lframe      = Frame(oframe, width=300, height=500)
 
-if __name__=='__main__':
-    img = cv.imread('board.jpg')
-    x = split_board(img)
-    print(len(x))
-    for x in x:
-        card = find_card(x)
-        num, suit = extract_cornor(card)
-        d = find_somthing(num)
-        cv.imshow('hej', d)
-        cv.waitKey(0)
+panel1      = Label(master=uframe)
+panel2      = Label(master=uframe)
+panel3      = Label(master=lframe)
+
+leftbtn.grid(row=0, column=0,padx=10, pady=5)
+oframe.grid(row=0, column=1,padx=10, pady=5)
+rightbtn.grid(row=0, column=2,padx=10, pady=5)
+
+uframe.grid(row=0, column=0, padx=10, pady=5)
+lframe.grid(row=1, column=0, padx=10, pady=5)
+
+panel1.grid(row=0, column=0, padx="10", pady="10")
+panel2.grid(row=0, column=1, padx="10", pady="10")
+
+panel3.grid(row=0, column=1, padx="10", pady="10")
+
+
+get_image(images[index])
+root.mainloop()

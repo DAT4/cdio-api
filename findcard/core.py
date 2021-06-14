@@ -22,6 +22,7 @@ def strip_margin(img):
                 _, roismall = cv.threshold(roismall, 0, 255, cv.THRESH_OTSU | cv.THRESH_BINARY_INV)
                 return roismall
 
+
 '''
 extract_card() takes the contours and the image of a card as the parameters
 the function applies the contours to the original image and warps it into an
@@ -43,6 +44,7 @@ def extract_card(aprox,img):
     matrix = cv.getPerspectiveTransform(rect, pts2)
     result = cv.warpPerspective(img, matrix, (200, 300))
     return result
+
 
 '''
 find_card() takes the original image as the parameter 
@@ -83,14 +85,15 @@ the function returns an array of single card images, in order.
 |               | 
 | #     # # # # |
 |---------------|
-
 '''
 def split_board(img):
     def is_card_pos(i,j): return i!=1 or j!=1 and j!=2
     w, h, b = 560, 800, 15
     return [img[b+i*h:b+i*h+h,b+j*w:b+j*w+w] 
             for i in range(2) 
-            for j in range(7) if is_card_pos(i,j)]
+            for j in range(7) 
+            if is_card_pos(i,j)]
+
 
 '''
 show() takes an image, shows it and returns the ascii value of 
@@ -99,3 +102,6 @@ a key pressed while focusing the window
 def show(img):
     cv.imshow('hej', img)
     return cv.waitKey(0)
+
+def get(path):
+    return cv.cvtColor(cv.imread(path), cv.COLOR_BGR2RGB)
