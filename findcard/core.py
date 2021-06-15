@@ -1,7 +1,6 @@
 import cv2 as cv
 import numpy as np
 import imutils as util
-import skimage.exposure
 
 '''
 strip_margin() should get a part of the corner in the parameters
@@ -95,6 +94,7 @@ def split_board(img):
             for j in range(7) 
             if is_card_pos(i,j)]
 
+
 '''
 show() takes an image, shows it and returns the ascii value of 
 a key pressed while focusing the window
@@ -102,3 +102,6 @@ a key pressed while focusing the window
 def show(img):
     cv.imshow('hej', img)
     return cv.waitKey(0)
+
+def get(path):
+    return cv.cvtColor(cv.imread(path), cv.COLOR_BGR2RGB)

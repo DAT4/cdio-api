@@ -3,7 +3,7 @@ FROM python:3
 RUN apt-get update
 RUN apt-get install libgl1-mesa-glx -y
 
-RUN pip install opencv-python imutils uvicorn fastapi python-multipart
+RUN pip install opencv-python imutils uvicorn fastapi python-multipart scikit-image
 
 EXPOSE 80
 
