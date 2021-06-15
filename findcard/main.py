@@ -32,6 +32,51 @@ OPTIONS_NUM = [
     "K"
 ]
 
+'''
+Get numbers from the db
+'''
+image_nums = get_all_nums()
+image_syms = get_all_syms()
+
+def check_num(img):
+    lowest = 999999999
+    for im in image_nums:
+        name = im['name']
+        im = im['number']
+        im = cv.cvtColor(im, cv.COLOR_GRAY2BGR)
+        im = cv.cvtColor(im, cv.COLOR_RGB2GRAY)
+        bit = cv.bitwise_xor(img, im)
+        count = find_white_pixels(bit) 
+        if count < lowest:
+            lowest = count
+            out = {'name':name,'bit':bit}
+    print(out)
+
+def check_sym(img):
+    lowest = 999999999
+    for im in image_syms:
+        print(im['name'])
+        name = im['name']
+        im = im['symbol']
+        im = cv.cvtColor(im, cv.COLOR_GRAY2BGR)
+        im = cv.cvtColor(im, cv.COLOR_RGB2GRAY)
+        bit = cv.bitwise_xor(img, im)
+        count = find_white_pixels(bit) 
+        if count < lowest:
+            lowest = count
+            out = {'name':name,'bit':bit}
+    print(out)
+        
+
+
+def find_white_pixels(img):
+    out = 0 
+    for x in img:
+        for y in x:
+            if y != 0:
+                out += 1
+    return out
+
 t, b = None, None
 
 root = Tk()
@@ -39,7 +84,6 @@ root.geometry("400x600")
 root.resizable(width=0, height=0)
 root.title("CDIO - Final Project")
 
-images = None
 index = 0
 path    = filedialog.askdirectory()
 images  = [f'{path}/{x}'for x in listdir(path) if x[-3:] == 'jpg'] 
@@ -66,6 +110,9 @@ def get_image(path):
     global t,b
     img     = find_card(get(path))
     t, b    = extract_cornor(img)
+
+    check_num(t)
+    check_sym(b)
 
     top = Image.fromarray(t)
     top = top.resize((100,100), Image.ANTIALIAS)
