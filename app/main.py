@@ -3,6 +3,7 @@ from fastapi.responses import StreamingResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from .imgstf import edge as im
+from .database import database as db
 
 app = FastAPI()
 
@@ -16,6 +17,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+db          = db.Database('mongodb://mama.sh:27019')
+img_machine = im.ImageMachine(db)
 
 @app.post('/upload/')
 async def upload(file: UploadFile = File(...)):
@@ -24,9 +27,4 @@ async def upload(file: UploadFile = File(...)):
 
 @app.post('/board/')
 async def upload(file: UploadFile = File(...)):
-    game_state = {
-            'builds':['H2', 'S8', 'S0', 'D13', 'K4', 'D8', 'K10',],
-            'suits':['H0', 'D4', '', '',],
-            'deck':'K11',
-            }
-    return JSONResponse(content=game_state)
+    return JSONResponse(content=img_machine.gamestate_from_board(file.file))

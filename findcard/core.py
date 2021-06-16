@@ -12,26 +12,36 @@ def strip_margin(img):
     blur        = cv.GaussianBlur(gray,(5,5),0)
     thresh      = cv.adaptiveThreshold(blur,255,1,1,11,2)
     contours,_  = cv.findContours(thresh,cv.RETR_LIST,cv.CHAIN_APPROX_SIMPLE)
-    return get_objects(gray, contours)[0]
+    dimensions  = get_dimensions(contours)
+    draw_contours_on_image(img, dimensions)
+    objects     = get_objects(gray, dimensions)
+    return get_final_object(objects)
 
-def get_contours(contours):
-    return [cnt
+def get_final_object(objects):
+    if len(objects) == 2:
+        a,b = objects
+        return cv.resize(np.hstack((b,a)),(10,10))
+    return objects[0]
+
+def get_dimensions(contours):
+    return [cv.boundingRect(cnt)
         for cnt
         in contours
         if cv.contourArea(cnt) > 50]
 
-def get_objects(img, contours):
-    return [get_object(img, x,y,w,h)
+def get_objects(img, dimensions):
+    return [get_object(img, (x,y,w,h))
         for [x,y,w,h]
-        in [cv.boundingRect(cnt)
-        for cnt
-        in get_contours(contours)]
+        in dimensions
         if h>20]
+def draw_contours_on_image(img, dimensions):
+    for [x,y,w,h] in dimensions:
+        if h>20: cv.rectangle(img,(x,y),(x+w,y+h),(0,0,255),2)
 
-def get_object(img, x, y, h, w):
-    a = img[y:y+h,x:x+w]
-    b = cv.resize(a,(10,10))
-    _, out = cv.threshold(b, 0, 255, cv.THRESH_OTSU | cv.THRESH_BINARY_INV)
+def get_object(img, dim):
+    [x, y, w, h] = dim
+    out = cv.resize(img[y:y+h,x:x+w],(10,10))
+    _, out = cv.threshold(out, 0, 255, cv.THRESH_OTSU | cv.THRESH_BINARY_INV)
     return out
 
 
