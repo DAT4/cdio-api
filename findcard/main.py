@@ -2,17 +2,88 @@ from core import *
 from os import listdir
 import cv2 as cv
 import tkinter as tk
-from tkinter import filedialog, Tk, RIGHT, LEFT, BOTH, RAISED, CENTER
+from tkinter import OptionMenu, StringVar, filedialog, Tk
 from tkinter import Text, W, N, E, S, Button
 from tkinter.ttk import Frame, Style, Label
 from PIL import Image, ImageTk
+from database import *
+
+
+OPTIONS_SYM = [
+    "S",
+    "D",
+    "C",
+    "H"
+]
+
+OPTIONS_NUM = [
+    "A",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "J",
+    "Q",
+    "K"
+]
+
+'''
+Get numbers from the db
+'''
+image_nums = get_all_nums()
+image_syms = get_all_syms()
+
+def check_num(img):
+    lowest = 999999999
+    for im in image_nums:
+        name = im['name']
+        im = im['number']
+        im = cv.cvtColor(im, cv.COLOR_GRAY2BGR)
+        im = cv.cvtColor(im, cv.COLOR_RGB2GRAY)
+        bit = cv.bitwise_xor(img, im)
+        count = find_white_pixels(bit) 
+        if count < lowest:
+            lowest = count
+            out = {'name':name,'bit':bit}
+    print(out)
+
+def check_sym(img):
+    lowest = 999999999
+    for im in image_syms:
+        print(im['name'])
+        name = im['name']
+        im = im['symbol']
+        im = cv.cvtColor(im, cv.COLOR_GRAY2BGR)
+        im = cv.cvtColor(im, cv.COLOR_RGB2GRAY)
+        bit = cv.bitwise_xor(img, im)
+        count = find_white_pixels(bit) 
+        if count < lowest:
+            lowest = count
+            out = {'name':name,'bit':bit}
+    print(out)
+        
+
+
+def find_white_pixels(img):
+    out = 0 
+    for x in img:
+        for y in x:
+            if y != 0:
+                out += 1
+    return out
+
+t, b = None, None
 
 root = Tk()
-root.geometry("400x500")
+root.geometry("400x600")
 root.resizable(width=0, height=0)
 root.title("CDIO - Final Project")
 
-images = None
 index = 0
 path    = filedialog.askdirectory()
 images  = [f'{path}/{x}'for x in listdir(path) if x[-3:] == 'jpg'] 
@@ -29,9 +100,19 @@ def go_right():
     print(images[index])
     get_image(images[index])
 
+def save_num():
+    save_number(t,variable_num.get())
+
+def save_sym():
+    save_symbol(b,variable_sym.get())
+
 def get_image(path):
+    global t,b
     img     = find_card(get(path))
     t, b    = extract_cornor(img)
+
+    check_num(t)
+    check_sym(b)
 
     top = Image.fromarray(t)
     top = top.resize((100,100), Image.ANTIALIAS)
@@ -64,9 +145,27 @@ panel1      = Label(master=uframe)
 panel2      = Label(master=uframe)
 panel3      = Label(master=lframe)
 
+variable_sym = StringVar(uframe)
+variable_sym.set(OPTIONS_SYM[0]) # default value
+dropdown_sym = OptionMenu(uframe,variable_sym, *OPTIONS_SYM)
+
+variable_num = StringVar(uframe)
+variable_num.set(OPTIONS_NUM[0]) # default value
+dropdown_num = OptionMenu(uframe,variable_num, *OPTIONS_NUM)
+
+save_num_btn = Button(uframe, text="save num", command=save_num)
+save_sym_btn = Button(uframe, text="save sym", command=save_sym)
+
 leftbtn.grid(row=0, column=0,padx=10, pady=5)
 oframe.grid(row=0, column=1,padx=10, pady=5)
 rightbtn.grid(row=0, column=2,padx=10, pady=5)
+
+dropdown_num.grid(row=1, column=0, padx=10, pady=5)
+dropdown_sym.grid(row=1, column=1, padx=10, pady=5)
+
+save_num_btn.grid(row=2, column=0, padx=10, pady=5)
+save_sym_btn.grid(row=2, column=1, padx=10, pady=5)
+
 
 uframe.grid(row=0, column=0, padx=10, pady=5)
 lframe.grid(row=1, column=0, padx=10, pady=5)
