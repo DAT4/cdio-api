@@ -4,4 +4,4 @@ def get_response(url, data):
     pass
 
 def post_response(url, data):
-    requests.post(url, data)
+    requests.post(url, json=data)

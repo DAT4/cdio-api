@@ -87,9 +87,11 @@ root.resizable(width=0, height=0)
 root.title("CDIO - Final Project")
 
 index = 0
-path    = filedialog.askdirectory()
-images  = [f'{path}/{x}'for x in listdir(path) if x[-3:] == 'jpg'] 
-#images = [split_board(path)]
+path    = filedialog.askopenfilename()
+#images  = [f'{path}/{x}'for x in listdir(path) if x[-3:] == 'jpg'] 
+images = split_board(get(path))
+print(images)
+print(len(images))
 
 def go_left(): 
     global index, images
@@ -111,7 +113,7 @@ def save_sym():
 
 def get_image(path):
     global t,b
-    img     = find_card(get(path))
+    img     = find_card(path)
     t, b    = extract_cornor(img)
 
     check_num(t)
