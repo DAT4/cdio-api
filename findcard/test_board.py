@@ -33,7 +33,11 @@ OPTIONS_NUM = [
     "K"
 ]
 
-URL = 'cdio.mama.sh/board'
+BUILDS= []
+SUITS = []
+DECK = ""
+
+URL = 'http://cdio.mama.sh/board'
 
 '''
 Get numbers from the db
@@ -54,6 +58,7 @@ def check_num(img):
             lowest = count
             out = {'name':name,'bit':bit}
     print(out)
+    return out['name']
 
 def check_sym(img):
     lowest = 999999999
@@ -68,7 +73,8 @@ def check_sym(img):
         if count < lowest:
             lowest = count
             out = {'name':name,'bit':bit}
-    print(out)        
+    print(out)
+    return out['name']       
 
 
 def find_white_pixels(img):
@@ -88,7 +94,6 @@ root.title("CDIO - Final Project")
 
 index = 0
 path    = filedialog.askopenfilename()
-#images  = [f'{path}/{x}'for x in listdir(path) if x[-3:] == 'jpg'] 
 images = split_board(get(path))
 print(images)
 print(len(images))
@@ -96,14 +101,14 @@ print(len(images))
 def go_left(): 
     global index, images
     index = (index+1)%len(images)
-    get_image(images[index])
+    get_image(images[index], index)
 
 def go_right(): 
     global index, images
     index = (index-1)%len(images)
     print(index)
     print(images[index])
-    get_image(images[index])
+    get_image(images[index], index)
 
 def save_num():
     save_number(t,variable_num.get())
@@ -111,13 +116,41 @@ def save_num():
 def save_sym():
     save_symbol(b,variable_sym.get())
 
-def get_image(path):
+def post_to_api():
+    data = {
+        "builds" : BUILDS,
+        "suits" : SUITS,
+        "deck" : DECK
+    }
+    post_response(URL,data)
+
+def get_image(path, index):
     global t,b
     img     = find_card(path)
     t, b    = extract_cornor(img)
 
-    check_num(t)
-    check_sym(b)
+    num = check_num(t)
+    sym = check_sym(b)
+
+    print('-'*100)
+    print(index)
+    print('-'*100)
+
+    if int(index) in range(0,7):
+        BUILDS.insert(0,sym + num)
+        if index == 1:
+            BUILDS.reverse()
+        print(BUILDS)
+
+    if index == 7:
+        DECK = sym + num
+        print(DECK)
+
+    if int(index) in range(8,12):
+        SUITS.append(sym + num)
+        if index == 8:
+            SUITS.reverse()
+        print(SUITS)
 
     top = Image.fromarray(t)
     top = top.resize((100,100), Image.ANTIALIAS)
@@ -161,6 +194,8 @@ dropdown_num = OptionMenu(uframe,variable_num, *OPTIONS_NUM)
 save_num_btn = Button(uframe, text="save num", command=save_num)
 save_sym_btn = Button(uframe, text="save sym", command=save_sym)
 
+send_to_api = Button(root, text="Send to API", command=post_to_api)
+
 leftbtn.grid(row=0, column=0,padx=10, pady=5)
 oframe.grid(row=0, column=1,padx=10, pady=5)
 rightbtn.grid(row=0, column=2,padx=10, pady=5)
@@ -171,6 +206,7 @@ dropdown_sym.grid(row=1, column=1, padx=10, pady=5)
 save_num_btn.grid(row=2, column=0, padx=10, pady=5)
 save_sym_btn.grid(row=2, column=1, padx=10, pady=5)
 
+send_to_api.grid(row=3, column=1,padx=10, pady=5)
 
 uframe.grid(row=0, column=0, padx=10, pady=5)
 lframe.grid(row=1, column=0, padx=10, pady=5)
@@ -181,5 +217,5 @@ panel2.grid(row=0, column=1, padx="10", pady="10")
 panel3.grid(row=0, column=1, padx="10", pady="10")
 
 
-get_image(images[index])
+get_image(images[index],index)
 root.mainloop()
