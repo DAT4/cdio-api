@@ -127,3 +127,6 @@ def show(img):
 
 def get(path):
     return cv.cvtColor(cv.imread(path), cv.COLOR_BGR2RGB)
+
+def get_bgr(path):
+    return cv.imread(path)
