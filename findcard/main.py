@@ -7,6 +7,7 @@ from tkinter import Text, W, N, E, S, Button
 from tkinter.ttk import Frame, Style, Label
 from PIL import Image, ImageTk
 from database import *
+from api import *
 
 
 OPTIONS_SYM = [
@@ -31,6 +32,8 @@ OPTIONS_NUM = [
     "Q",
     "K"
 ]
+
+URL = 'cdio.mama.sh/board'
 
 '''
 Get numbers from the db
@@ -87,6 +90,7 @@ root.title("CDIO - Final Project")
 index = 0
 path    = filedialog.askdirectory()
 images  = [f'{path}/{x}'for x in listdir(path) if x[-3:] == 'jpg'] 
+#images = [split_board(path)]
 
 def go_left(): 
     global index, images
