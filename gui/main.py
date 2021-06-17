@@ -41,38 +41,22 @@ Get numbers from the db
 image_nums = get_all_nums()
 image_syms = get_all_syms()
 
-def check_num(img):
-    lowest = 999999999
+def check_db_img(img, col):
+    lowest = 100
     for im in image_nums:
         name = im['name']
-        im = im['number']
+        im = im[col]
         im = cv.cvtColor(im, cv.COLOR_GRAY2BGR)
         im = cv.cvtColor(im, cv.COLOR_RGB2GRAY)
         bit = cv.bitwise_xor(img, im)
-        count = find_white_pixels(bit) 
+        count = find_white_pixels(bit)
         if count < lowest:
             lowest = count
             out = {'name':name,'bit':bit}
-    print(out)
-
-def check_sym(img):
-    lowest = 999999999
-    for im in image_syms:
-        print(im['name'])
-        name = im['name']
-        im = im['symbol']
-        im = cv.cvtColor(im, cv.COLOR_GRAY2BGR)
-        im = cv.cvtColor(im, cv.COLOR_RGB2GRAY)
-        bit = cv.bitwise_xor(img, im)
-        count = find_white_pixels(bit) 
-        if count < lowest:
-            lowest = count
-            out = {'name':name,'bit':bit}
-    print(out)        
-
+    return out['name']
 
 def find_white_pixels(img):
-    out = 0 
+    out = 0
     for x in img:
         for y in x:
             if y != 0:
@@ -88,15 +72,15 @@ root.title("CDIO - Final Project")
 
 index = 0
 path    = filedialog.askdirectory()
-images  = [f'{path}/{x}'for x in listdir(path) if x[-3:] == 'jpg'] 
+images  = [f'{path}/{x}'for x in listdir(path) if x[-3:] == 'jpg']
 #images = [split_board(path)]
 
-def go_left(): 
+def go_left():
     global index, images
     index = (index+1)%len(images)
     get_image(images[index])
 
-def go_right(): 
+def go_right():
     global index, images
     index = (index-1)%len(images)
     print(index)
@@ -114,8 +98,10 @@ def get_image(path):
     img     = find_card(get(path))
     t, b    = extract_cornor(img)
 
-    check_num(t)
-    check_sym(b)
+    num = check_db_img(t, 'symbol')
+    sym = check_db_img(b, 'number')
+
+    panel4.config(text=f'{sym}{num}')
 
     top = Image.fromarray(t)
     top = top.resize((100,100), Image.ANTIALIAS)
@@ -129,9 +115,9 @@ def get_image(path):
     img = img.resize((200,300), Image.ANTIALIAS)
     img = ImageTk.PhotoImage(img)
 
-    panel1.imgtk = top 
+    panel1.imgtk = top
     panel1.config(image=top)
-    panel2.imgtk = bot 
+    panel2.imgtk = bot
     panel2.config(image=bot)
     panel3.imgtk = img
     panel3.config(image=img)
@@ -147,6 +133,7 @@ lframe      = Frame(oframe, width=300, height=500)
 panel1      = Label(master=uframe)
 panel2      = Label(master=uframe)
 panel3      = Label(master=lframe)
+panel4      = Label(master=lframe, text="hej")
 
 variable_sym = StringVar(uframe)
 variable_sym.set(OPTIONS_SYM[0]) # default value
@@ -177,6 +164,7 @@ panel1.grid(row=0, column=0, padx="10", pady="10")
 panel2.grid(row=0, column=1, padx="10", pady="10")
 
 panel3.grid(row=0, column=1, padx="10", pady="10")
+panel4.grid(row=1, column=1, padx="10", pady="10")
 
 
 get_image(images[index])

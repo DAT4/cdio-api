@@ -17,11 +17,13 @@ def strip_margin(img):
     objects     = get_objects(gray, dimensions)
     return get_final_object(objects)
 
+
 def get_final_object(objects):
     if len(objects) == 2:
         a,b = objects
         return cv.resize(np.hstack((b,a)),(10,10))
     return objects[0]
+
 
 def get_dimensions(contours):
     return [cv.boundingRect(cnt)
@@ -29,14 +31,18 @@ def get_dimensions(contours):
         in contours
         if cv.contourArea(cnt) > 50]
 
+
 def get_objects(img, dimensions):
     return [get_object(img, (x,y,w,h))
         for [x,y,w,h]
         in dimensions
         if h>20]
+
+
 def draw_contours_on_image(img, dimensions):
     for [x,y,w,h] in dimensions:
         if h>20: cv.rectangle(img,(x,y),(x+w,y+h),(0,0,255),2)
+
 
 def get_object(img, dim):
     [x, y, w, h] = dim
@@ -74,17 +80,31 @@ the function finds the contours shaping the card
 and returns extract_card() on the image with the found contours
 '''
 def find_card(img):
-    gray = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
-    _, thresh = cv.threshold(gray, 140, 255, cv.THRESH_BINARY)
-    see = cv.findContours(image=thresh.copy(), mode=cv.RETR_TREE, method=cv.CHAIN_APPROX_NONE)
-    see = util.grab_contours(see)
-    see = sorted(see,key=cv.contourArea,reverse=True)[:3]
-    for s in see:
-        lnked = cv.arcLength(s,True)
-        aprox = cv.approxPolyDP(s,0.02*lnked,True)
-        if len(aprox) == 4:
-            print('found card')
-            return extract_card(aprox,img)
+    gray        = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
+    _, thresh   = cv.threshold(gray, 140, 255, cv.THRESH_BINARY)
+
+    contours    = cv.findContours(image=thresh.copy(), mode=cv.RETR_TREE, method=cv.CHAIN_APPROX_NONE)
+    contours    = util.grab_contours(contours)
+    contours    = sorted(contours,key=cv.contourArea,reverse=True)[:3]
+
+    return get_card(contours, img)
+
+
+def get_card(contours, img):
+    for cnt in contours:
+        aprox = get_aprox(cnt)
+        if is_card(aprox):
+            return extract_card(aprox, img)
+    return None
+
+
+def get_aprox(cnt):
+    lnked = cv.arcLength(cnt,True)
+    return cv.approxPolyDP(cnt,0.02*lnked,True)
+
+
+def is_card(aprox):
+    return len(aprox) == 4
 
 
 '''
