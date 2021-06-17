@@ -57,9 +57,9 @@ def find_white_pixels(img):
                 out += 1
     return out
 
-def get_num_and_sym(corner, syms, nums):
+def get_num_and_sym(corner, db_syms, db_nums):
     num, sym = corner
-    return check_sym(sym, syms) + check_num(num, nums)
+    return check_sym(sym, db_syms) + check_num(num, db_nums)
 
 def gamestatify(liste):
     out = {
@@ -79,4 +79,5 @@ class ImageMachine:
                 for x in core.split_board(load(file))]
         db_syms = self.db.get_all_syms()
         db_nums = self.db.get_all_nums()
-        return gamestatify([get_num_and_sym(x, db_syms, db_nums) for x in corners])
+        liste = [get_num_and_sym(x, db_syms, db_nums) for x in corners]
+        return gamestatify(liste)

@@ -29,7 +29,7 @@ def get_dimensions(contours):
     return [cv.boundingRect(cnt)
         for cnt
         in contours
-        if cv.contourArea(cnt) > 50]
+        if cv.contourArea(cnt) > 60]
 
 
 def get_objects(img, dimensions):
@@ -112,8 +112,8 @@ extract_cornor() takes the extracted card as a parameter
 the function returns the number and symbol
 '''
 def extract_cornor(card):
-    corner = card[0:80,0:30]
-    num, sym = strip_margin(corner[:45]), strip_margin(corner[40:])
+    corner = card[0:90,0:30]
+    num, sym = strip_margin(corner[:50]), strip_margin(corner[40:])
     return num, sym
 
 

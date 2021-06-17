@@ -93,7 +93,7 @@ the function returns the number and symbol
 '''
 def extract_cornor(card):
     corner = card[0:80,0:30]
-    num, sym = strip_margin(corner[:40]), strip_margin(corner[40:])
+    num, sym = strip_margin(corner[:45]), strip_margin(corner[40:])
     return num, sym
 
 
