@@ -71,6 +71,8 @@ def extract_card(aprox,img):
     pts2 = np.float32([[0, 0], [200, 0], [0, 300], [200, 300]])
     matrix = cv.getPerspectiveTransform(rect, pts2)
     result = cv.warpPerspective(img, matrix, (200, 300))
+    print(result.shape)
+    result = cv.resize(result, (250,400))
     return result
 
 
@@ -112,8 +114,8 @@ extract_cornor() takes the extracted card as a parameter
 the function returns the number and symbol
 '''
 def extract_cornor(card):
-    corner = card[0:85,0:30]
-    num, sym = strip_margin(corner[:45]), strip_margin(corner[40:])
+    corner = card[0:110,0:35]
+    num, sym = strip_margin(corner[:65]), strip_margin(corner[45:])
     return num, sym
 
 
@@ -130,8 +132,16 @@ the function returns an array of single card images, in order.
 '''
 def split_board(img):
     def is_card_pos(i,j): return i!=1 or j!=1 and j!=2
-    w, h, b = 560, 800, 15
-    return [img[b+i*h:b+i*h+h,b+j*w:b+j*w+w]
+    '''
+    The original numbers are w = 560 , h = 800 and b = 15
+
+    if image is 1280*512 w = 185, h = 260, b = 0
+    '''
+
+    h, w, _ = img.shape
+
+    w, h = w//7, h//2
+    return [img[i*h:i*h+h,j*w:j*w+w]
             for i in range(2)
             for j in range(7)
             if is_card_pos(i,j)]
