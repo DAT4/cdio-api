@@ -44,6 +44,7 @@ image_syms = get_all_syms()
 def check_db_img(img, col):
     lowest = 100
     db = image_nums if col == 'number' else image_syms
+    print(db)
     for im in db:
         print(im)
         name = im['name']

@@ -112,8 +112,8 @@ extract_cornor() takes the extracted card as a parameter
 the function returns the number and symbol
 '''
 def extract_cornor(card):
-    corner = card[0:90,0:30]
-    num, sym = strip_margin(corner[:50]), strip_margin(corner[40:])
+    corner = card[0:85,0:30]
+    num, sym = strip_margin(corner[:45]), strip_margin(corner[40:])
     return num, sym
 
 
