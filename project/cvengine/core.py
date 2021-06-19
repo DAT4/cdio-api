@@ -71,6 +71,7 @@ def extract_card(aprox,img):
     pts2 = np.float32([[0, 0], [200, 0], [0, 300], [200, 300]])
     matrix = cv.getPerspectiveTransform(rect, pts2)
     result = cv.warpPerspective(img, matrix, (200, 300))
+    #return cv.resize(result,(500,200))
     return result
 
 
@@ -113,7 +114,7 @@ the function returns the number and symbol
 '''
 def extract_cornor(card):
     corner = card[0:80,0:30]
-    num, sym = strip_margin(corner[:40]), strip_margin(corner[40:])
+    num, sym = strip_margin(corner[:45]), strip_margin(corner[40:])
     return num, sym
 
 
@@ -137,16 +138,3 @@ def split_board(img):
             if is_card_pos(i,j)]
 
 
-'''
-show() takes an image, shows it and returns the ascii value of
-a key pressed while focusing the window
-'''
-def show(img):
-    cv.imshow('hej', img)
-    return cv.waitKey(0)
-
-def get(path):
-    return cv.cvtColor(cv.imread(path), cv.COLOR_BGR2RGB)
-
-def get_bgr(path):
-    return cv.imread(path)

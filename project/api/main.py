@@ -2,8 +2,8 @@ from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import StreamingResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from .imgstf import edge as im
-from .database import database as db
+from cvengine import edge as im
+from database.mongo import MongoDB
 
 app = FastAPI()
 
@@ -17,7 +17,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-db          = db.Database('mongodb://mama.sh:27019')
+db          = MongoDB('mongodb://mama.sh:27019')
 img_machine = im.ImageMachine(db)
 
 @app.post('/upload/')

@@ -7,6 +7,8 @@ RUN pip install opencv-python imutils uvicorn fastapi python-multipart scikit-im
 
 EXPOSE 80
 
-COPY ./app /app
+COPY ./api /api
+COPY ./cvengine /cvengine
+COPY ./database /database
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"] 
+CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "80"] 
