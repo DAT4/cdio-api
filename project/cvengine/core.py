@@ -72,6 +72,7 @@ def extract_card(aprox,img):
     matrix = cv.getPerspectiveTransform(rect, pts2)
     result = cv.warpPerspective(img, matrix, (200, 300))
     #return cv.resize(result,(500,200))
+    print(result.shape)
     return result
 
 

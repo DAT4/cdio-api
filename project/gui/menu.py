@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog
 from os import listdir
+from cvengine import edge as im
 
 class MenuView(tk.Frame):
     def __init__(self, master=None):
@@ -15,10 +16,10 @@ class MenuView(tk.Frame):
 
     def get_images_from_folder(self):
         path = tk.filedialog.askdirectory()
-        images_in_path = [f'{path}/{x}'
+        images = [im.get_the_stuff(im.get(f'{path}/{x}'))
                 for x in listdir(path)
                 if x[-3:] == 'jpg']
-        self.master.set_card_scroller_view(images_in_path)
+        self.master.set_card_scroller_view(images)
 
     def create_widgets(self):
         self.btn_load = tk.Button(self, text='load folder', command=self.get_images_from_folder)

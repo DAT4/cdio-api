@@ -81,8 +81,11 @@ def gamestatify(liste):
     print(out)
     return out
 
-def cards_from_board(img):
-    return [core.find_card(x) for x in core.split_board(img)]
+def cards_from_list(imglist):
+    return [core.find_card(x) for x in imglist]
+
+def split_board(img):
+    return core.split_board(img)
 
 def cards_from_path_list(pathlist):
     return [core.find_card(get(x)) for x in pathlist]
