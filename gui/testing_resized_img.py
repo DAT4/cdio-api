@@ -41,20 +41,26 @@ def testing_find_card(img):
     show(image)
 
 image = get_bgr('/home/thomas/Skrivebord/Projects/Mapper/OpenCV/cdio-api/gui/boards/out/out.jpg')
-hj = get_bgr('/home/thomas/Skrivebord/Projects/Mapper/OpenCV/cdio-api/gui/new/20210617_105545.jpg')
-cj = get_bgr('/home/thomas/Skrivebord/Projects/Mapper/OpenCV/cdio-api/gui/new/20210617_105410.jpg')
+jh = get_bgr('/home/thomas/Skrivebord/Projects/Mapper/OpenCV/cdio-api/gui/new/20210617_105545.jpg')
+jc = get_bgr('/home/thomas/Skrivebord/Projects/Mapper/OpenCV/cdio-api/gui/new/20210617_105410.jpg')
+js = get_bgr('/home/thomas/Skrivebord/Projects/Mapper/OpenCV/cdio-api/gui/new/20210617_105316.jpg')
+jd = get_bgr('/home/thomas/Skrivebord/Projects/Mapper/OpenCV/cdio-api/gui/new/20210617_105454.jpg')
+
 qs = get_bgr('/home/thomas/Skrivebord/Projects/Mapper/OpenCV/cdio-api/gui/new/20210617_105313.jpg')
+qc = get_bgr('/home/thomas/Skrivebord/Projects/Mapper/OpenCV/cdio-api/gui/new/20210617_105407.jpg')
+qd = get_bgr('/home/thomas/Skrivebord/Projects/Mapper/OpenCV/cdio-api/gui/new/20210617_105451.jpg')
+qh = get_bgr('/home/thomas/Skrivebord/Projects/Mapper/OpenCV/cdio-api/gui/new/20210617_105541.jpg')
 
 path = '/home/thomas/Skrivebord/Projects/Mapper/OpenCV/cdio-api/gui/new'
 images  = [f'{path}/{x}'for x in listdir(path) if x[-3:] == 'jpg']
 
-#testing_find_card_with_cornor(qs) 
+testing_find_card_with_cornor(jd) 
 
-
+'''
 for img in images:
     image = get_bgr(img)
     testing_find_card(image)
-
+'''
 
 '''
 appen er sat til            = 1800*4000
