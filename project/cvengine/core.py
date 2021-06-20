@@ -71,8 +71,6 @@ def extract_card(aprox,img):
     pts2 = np.float32([[0, 0], [200, 0], [0, 300], [200, 300]])
     matrix = cv.getPerspectiveTransform(rect, pts2)
     result = cv.warpPerspective(img, matrix, (200, 300))
-    #return cv.resize(result,(500,200))
-    print(result.shape)
     return result
 
 
@@ -132,8 +130,9 @@ the function returns an array of single card images, in order.
 '''
 def split_board(img):
     def is_card_pos(i,j): return i!=1 or j!=1 and j!=2
-    w, h, b = 560, 800, 15
-    return [img[b+i*h:b+i*h+h,b+j*w:b+j*w+w]
+    h,w,_ = img.shape
+    w, h, = w//7, h//2
+    return [img[i*h:i*h+h,j*w:j*w+w]
             for i in range(2)
             for j in range(7)
             if is_card_pos(i,j)]

@@ -78,7 +78,6 @@ def gamestatify(liste):
             'suits': liste[-4:],
             'deck': liste[-5],
             }
-    print(out)
     return out
 
 def cards_from_list(imglist):

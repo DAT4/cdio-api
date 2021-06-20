@@ -11,8 +11,6 @@ class ImageView(tk.Label):
         self.set_image(img.copy(), dim)
 
     def set_image(self, img, dim):
-        print('-'*100)
-        print(type(img))
         img = Image.fromarray(img)
         img = img.resize(dim, Image.ANTIALIAS)
         img = ImageTk.PhotoImage(img)

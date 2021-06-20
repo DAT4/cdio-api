@@ -20,12 +20,9 @@ class BoardView(tk.Frame):
         self.grid()
         self.create_widgets(self.images)
 
+    #TODO make this an object
     def scroll(self):
-        print('-'*100)
-        print(len(self.images))
-        print('-'*100)
         stuff = [im.get_the_stuff(x) for x in self.images]
-        print(stuff)
         self.scroller = CardScollerView(stuff, master=self)
 
     def exit(self):
