@@ -1,10 +1,10 @@
-from cvengine import edge as im
 import os
 import tkinter as tk
 from database.mongo import MongoDB
 from .board import BoardView
 from .cardscroller import CardScollerView
 from .menu import MenuView
+from .dbview import DBView
 
 
 class Application(tk.Frame):
@@ -20,6 +20,10 @@ class Application(tk.Frame):
     def set_menu_view(self):
         self.focus.destroy()
         self.create_widgets()
+
+    def set_db_view(self, objects):
+        self.focus.destroy()
+        self.focus = DBView(objects, master=self)
 
     def set_board_view(self, image_path):
         self.focus.destroy()

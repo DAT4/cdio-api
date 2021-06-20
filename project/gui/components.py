@@ -19,15 +19,33 @@ class ImageView(tk.Label):
 
 
 class InfoView(tk.Frame):
-    def __init__(self, stuff, pos, master=None):
+    def __init__(self, card, pos, master=None):
         super().__init__(master)
         self.master = master
         x,y = pos
         self.grid(row=x, column=y, padx=5, pady=5)
-        self.create_widgets(stuff)
+        self.create_widgets(card)
 
-    def create_widgets(self, stuff):
-        self.num    = ImageView(stuff['num'], (50,50), (0,0), master=self)
-        self.sym    = ImageView(stuff['sym'], (50,50), (0,1), master=self)
-        self.db_num = DatabaseView(stuff['num'], DBType.NUMBER,(1,0), master=self)
-        self.db_sym = DatabaseView(stuff['sym'], DBType.SYMBOL,(1,1), master=self)
+    def create_widgets(self, card):
+        self.num    = ImageView(card.num.img, (50,50), (0,0), master=self)
+        self.sym    = ImageView(card.sym.img, (50,50), (0,1), master=self)
+        self.db_num = DatabaseView(card.num.img, DBType.NUMBER,(1,0), master=self)
+        self.db_sym = DatabaseView(card.sym.img, DBType.SYMBOL,(1,1), master=self)
+
+class DBInfoView(tk.Frame):
+    def __init__(self, objects, pos, master=None):
+        super().__init__(master)
+        x,y = pos
+        self.master = master
+        self.grid(row=x, column=y, padx=5, pady=5)
+        self.create_widgets(objects)
+
+    def create_widgets(self, objects):
+        cols = 3
+        positions = [(x,y)
+                for x in range(len(objects))
+                for y in range(cols)][:len(objects)]
+        self.objects = [ImageView(obj.img,(50,50), pos, master=self)
+                for obj,pos
+                in zip(objects, positions)]
+        print(self.objects)

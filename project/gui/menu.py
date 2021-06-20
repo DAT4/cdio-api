@@ -1,7 +1,9 @@
 import tkinter as tk
 from tkinter import filedialog
 from os import listdir
+import sys
 from cvengine import edge as im
+from .db import DATABASE
 
 class MenuView(tk.Frame):
     def __init__(self, master=None):
@@ -14,11 +16,23 @@ class MenuView(tk.Frame):
         image_path = tk.filedialog.askopenfilename()
         self.master.set_board_view(image_path)
 
+    def get_nums(self):
+        nums = DATABASE.get_numbers()
+        print(nums)
+        self.master.set_db_view(nums)
+
+    def get_syms(self):
+        syms = DATABASE.get_symbols()
+        print(syms)
+        self.master.set_db_view(syms)
+
     def get_images_from_folder(self):
         path = tk.filedialog.askdirectory()
-        images = [im.get_the_stuff(im.get(f'{path}/{x}'))
+        images = [im.get_card(im.get(f'{path}/{x}'))
                 for x in listdir(path)
                 if x[-3:] == 'jpg']
+        for x in images:
+            print(x)
         self.master.set_card_scroller_view(images)
 
     def create_widgets(self):
@@ -27,4 +41,13 @@ class MenuView(tk.Frame):
 
         self.btn_load = tk.Button(self, text='load board', command=self.get_board)
         self.btn_load.grid(row=1, column=0, padx=5, pady=5)
+
+        self.btn_load_syms = tk.Button(self, text='load syms from db', command=self.get_syms)
+        self.btn_load_syms.grid(row=2, column=0, padx=5, pady=5)
+
+        self.btn_load_keys = tk.Button(self, text='load nums from db', command=self.get_nums)
+        self.btn_load_keys.grid(row=3, column=0, padx=5, pady=5)
+
+        self.btn_exit= tk.Button(self, text='exit', command=sys.exit)
+        self.btn_exit.grid(row=4, column=0, padx=5, pady=5)
 

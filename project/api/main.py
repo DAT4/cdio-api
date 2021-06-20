@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from cvengine import edge as im
 from database.mongo import MongoDB
+from models.gamestate import GameState
 
 app = FastAPI()
 
@@ -27,4 +28,5 @@ async def upload(file: UploadFile = File(...)):
 
 @app.post('/board/')
 async def upload(file: UploadFile = File(...)):
-    return JSONResponse(content=img_machine.gamestate_from_board(file.file))
+    gamestate = GameState(db, im.load(file.file))
+    return JSONResponse(content=gamestate.json())

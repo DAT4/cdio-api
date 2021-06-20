@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
 import imutils as util
+from models.cardobject import Card, EmptyCard
 
 '''
 strip_margin() should get a part of the corner in the parameters
@@ -90,7 +91,6 @@ def find_card(img):
 
     return get_card(contours, img)
 
-
 def get_card(contours, img):
     for cnt in contours:
         aprox = get_aprox(cnt)
@@ -118,24 +118,11 @@ def extract_cornor(card):
     return num, sym
 
 
-'''
-split_board() takes the first image sent from the phone in the
-scale 1:2.5 landscape
-the function returns an array of single card images, in order.
-
-|---------------|
-| # # # # # # # |
-|               |
-| #     # # # # |
-|---------------|
-'''
-def split_board(img):
-    def is_card_pos(i,j): return i!=1 or j!=1 and j!=2
-    h,w,_ = img.shape
-    w, h, = w//7, h//2
-    return [img[i*h:i*h+h,j*w:j*w+w]
-            for i in range(2)
-            for j in range(7)
-            if is_card_pos(i,j)]
-
-
+def create_card_object(card):
+    if card is None:
+        return EmptyCard()
+    try:
+        num, sym = extract_cornor(card)
+        return Card(card, num, sym)
+    except:
+        return EmptyCard()

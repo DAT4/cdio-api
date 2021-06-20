@@ -1,37 +1,35 @@
 import tkinter as tk
 from cvengine import edge as im
-from .components import ImageView, InfoView
+from .components import ImageView, InfoView, DBInfoView
 
-'''
-stuff is image and both corners in a json
-{
-"img":image,
-"top":top,
-"bot":bot,
-}
-'''
-class CardScollerView(tk.Frame):
-    def __init__(self, cards, master=None):
+class DBView(tk.Frame):
+    def __init__(self, corner_objects, master=None):
         super().__init__(master)
         self.master = master
         self.grid()
-        self.cards = cards
+        self.keys = [x.val for x in corner_objects]
+        self.corner_objects = self.sort(corner_objects)
+        print(self.corner_objects)
         self.index = 0
         self.create_widgets()
         self.showtime()
 
+    def sort(self, corner_objects):
+        return {k: [x for x in corner_objects if x.val == k] for k in self.keys}
+
     def go_left(self):
-        self.index = (self.index+1)%len(self.cards)
+        self.index = (self.index+1)%len(self.keys)
+        self.info.destroy()
         self.showtime()
 
     def go_right(self):
-        self.index = (self.index-1)%len(self.cards)
+        self.index = (self.index-1)%len(self.keys)
+        self.info.destroy()
         self.showtime()
 
     def showtime(self):
-        card = self.cards[self.index]
-        self.info = InfoView(card, (0,1), master=self)
-        self.card = ImageView(card.img, (300,500), (1,1), master=self)
+        objects     = self.corner_objects[self.keys[self.index]]
+        self.info   = DBInfoView(objects, (1,1), master=self)
 
     def exit(self):
         self.master.set_menu_view()
