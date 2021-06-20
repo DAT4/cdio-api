@@ -53,7 +53,7 @@ qh = get_bgr('/home/thomas/Skrivebord/Projects/Mapper/OpenCV/cdio-api/gui/new/20
 
 path = '/home/thomas/Skrivebord/Projects/Mapper/OpenCV/cdio-api/gui/new'
 images  = [f'{path}/{x}'for x in listdir(path) if x[-3:] == 'jpg']
-
+""
 testing_find_card_with_cornor(jd) 
 
 '''
