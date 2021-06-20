@@ -2,27 +2,34 @@ import tkinter as tk
 from cvengine import edge as im
 from .components import ImageView, InfoView
 
+'''
+stuff is image and both corners in a json
+{
+"img":image,
+"top":top,
+"bot":bot,
+}
+'''
 class CardScollerView(tk.Frame):
-    def __init__(self, images, master=None):
+    def __init__(self, stuff, master=None):
         super().__init__(master)
         self.master = master
         self.grid()
-        self.images = images
+        self.stuff = stuff
         self.index = 0
         self.create_widgets()
         self.showtime()
 
     def go_left(self):
-        self.index = (self.index+1)%len(self.images)
+        self.index = (self.index+1)%len(self.stuff)
         self.showtime()
 
     def go_right(self):
-        self.index = (self.index-1)%len(self.images)
+        self.index = (self.index-1)%len(self.stuff)
         self.showtime()
 
     def showtime(self):
-        img = im.get(self.images[self.index])
-        stuff = im.get_the_stuff(img)
+        stuff = self.stuff[self.index]
         self.info = InfoView(stuff, (0,1), master=self)
         self.card = ImageView(stuff['card'], (300,500), (1,1), master=self)
 

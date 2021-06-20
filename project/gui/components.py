@@ -8,7 +8,7 @@ class ImageView(tk.Label):
         self.master = master
         x,y = pos
         self.grid(row=x, column=y, padx=5, pady=5)
-        self.set_image(img, dim)
+        self.set_image(img.copy(), dim)
 
     def set_image(self, img, dim):
         img = Image.fromarray(img)
