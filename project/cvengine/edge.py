@@ -2,7 +2,8 @@ import io
 import cv2 as cv
 import numpy as np
 
-from . import core, dao
+from . import core
+
 
 def resize(img):
     desired_size = 300
@@ -57,9 +58,19 @@ def find_white_pixels(img):
                 out += 1
     return out
 
-def get_num_and_sym(corner, db_syms, db_nums):
+def get_the_stuff(img):
+    card = core.find_card(img)
+    num, sym = core.extract_cornor(card)
+    return {
+            'card': card,
+            'num': num,
+            'sym': sym,
+            }
+
+
+def get_num_and_sym(corner, syms, nums):
     num, sym = corner
-    return check_sym(sym, db_syms) + check_num(num, db_nums)
+    return check_sym(sym, syms) + check_num(num, nums)
 
 def gamestatify(liste):
     out = {
@@ -70,14 +81,32 @@ def gamestatify(liste):
     print(out)
     return out
 
+def cards_from_board(img):
+    return [core.find_card(x) for x in core.split_board(img)]
+
+def cards_from_path_list(pathlist):
+    return [core.find_card(get(x)) for x in pathlist]
+
 class ImageMachine:
     def __init__(self, db):
         self.db = db
 
     def gamestate_from_board(self, file):
-        corners = [core.extract_cornor(core.find_card(x))
-                for x in core.split_board(load(file))]
+        corners = [core.extract_cornor(x)
+                for x in cards_from_board(load(file))]
         db_syms = self.db.get_all_syms()
         db_nums = self.db.get_all_nums()
-        liste = [get_num_and_sym(x, db_syms, db_nums) for x in corners]
-        return gamestatify(liste)
+        return gamestatify([get_num_and_sym(x, db_syms, db_nums) for x in corners])
+
+'''
+show() takes an image, shows it and returns the ascii value of
+a key pressed while focusing the window
+'''
+def show(img):
+    cv.imshow('hej', img)
+    return cv.waitKey(0)
+
+def get(path):
+    return cv.cvtColor(cv.imread(path), cv.COLOR_BGR2RGB)
+
+board = get('resources/boards/out/2.jpg')

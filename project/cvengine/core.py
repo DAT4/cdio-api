@@ -29,7 +29,7 @@ def get_dimensions(contours):
     return [cv.boundingRect(cnt)
         for cnt
         in contours
-        if cv.contourArea(cnt) > 60]
+        if cv.contourArea(cnt) > 50]
 
 
 def get_objects(img, dimensions):
@@ -71,8 +71,7 @@ def extract_card(aprox,img):
     pts2 = np.float32([[0, 0], [200, 0], [0, 300], [200, 300]])
     matrix = cv.getPerspectiveTransform(rect, pts2)
     result = cv.warpPerspective(img, matrix, (200, 300))
-    print(result.shape)
-    result = cv.resize(result, (250,400))
+    #return cv.resize(result,(500,200))
     return result
 
 
@@ -114,8 +113,8 @@ extract_cornor() takes the extracted card as a parameter
 the function returns the number and symbol
 '''
 def extract_cornor(card):
-    corner = card[0:110,0:35]
-    num, sym = strip_margin(corner[:65]), strip_margin(corner[45:])
+    corner = card[0:80,0:30]
+    num, sym = strip_margin(corner[:45]), strip_margin(corner[40:])
     return num, sym
 
 
@@ -132,31 +131,10 @@ the function returns an array of single card images, in order.
 '''
 def split_board(img):
     def is_card_pos(i,j): return i!=1 or j!=1 and j!=2
-    '''
-    The original numbers are w = 560 , h = 800 and b = 15
-
-    if image is 1280*512 w = 185, h = 260, b = 0
-    '''
-
-    h, w, _ = img.shape
-
-    w, h = w//7, h//2
-    return [img[i*h:i*h+h,j*w:j*w+w]
+    w, h, b = 560, 800, 15
+    return [img[b+i*h:b+i*h+h,b+j*w:b+j*w+w]
             for i in range(2)
             for j in range(7)
             if is_card_pos(i,j)]
 
 
-'''
-show() takes an image, shows it and returns the ascii value of
-a key pressed while focusing the window
-'''
-def show(img):
-    cv.imshow('hej', img)
-    return cv.waitKey(0)
-
-def get(path):
-    return cv.cvtColor(cv.imread(path), cv.COLOR_BGR2RGB)
-
-def get_bgr(path):
-    return cv.imread(path)
