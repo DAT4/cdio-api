@@ -1,6 +1,7 @@
 import io
 import cv2 as cv
 import numpy as np
+from models.gamestate import GameState
 from . import core
 
 def load(file):
@@ -17,6 +18,13 @@ def get_card(img):
     '''returns card object from image'''
     card_img = core.find_card(img)
     return core.create_card_object(card_img)
+
+def gamestate_from_board(self, db, board_image):
+    '''returns gamestate object from image of board'''
+    cards = [im.get_card(x)
+            for x
+            in core.split_board(board_image)]
+    return GameState(db, cards)
 
 def show(img):
     '''shows image'''

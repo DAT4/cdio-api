@@ -3,6 +3,8 @@ import tkinter as tk
 from enum import Enum
 from database.mongo import MongoDB
 
+
+#TODO Find out how to have the db as a non global value.
 def start_db():
     mongo_uri = os.environ['CDIO_MONGO_PASS']
     return MongoDB(mongo_uri)
