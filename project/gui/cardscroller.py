@@ -2,14 +2,7 @@ import tkinter as tk
 from cvengine import edge as im
 from .components import ImageView, InfoView
 
-'''
-stuff is image and both corners in a json
-{
-"img":image,
-"top":top,
-"bot":bot,
-}
-'''
+
 class CardScollerView(tk.Frame):
     def __init__(self, cards, master=None):
         super().__init__(master)

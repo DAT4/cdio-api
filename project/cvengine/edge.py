@@ -19,9 +19,9 @@ def get_card(img):
     card_img = core.find_card(img)
     return core.create_card_object(card_img)
 
-def gamestate_from_board(self, db, board_image):
+def gamestate_from_board(db, board_image):
     '''returns gamestate object from image of board'''
-    cards = [im.get_card(x)
+    cards = [get_card(x)
             for x
             in core.split_board(board_image)]
     return GameState(db, cards)

@@ -9,7 +9,6 @@ class DBView(tk.Frame):
         self.grid()
         self.keys = [x.val for x in corner_objects]
         self.corner_objects = self.sort(corner_objects)
-        print(self.corner_objects)
         self.index = 0
         self.create_widgets()
         self.showtime()
@@ -43,4 +42,3 @@ class DBView(tk.Frame):
 
         self.btn_exit = tk.Button(self, text='exit', command=self.exit)
         self.btn_exit.grid(row=2, column=1, padx=5, pady=5)
-

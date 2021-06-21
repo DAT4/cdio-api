@@ -3,11 +3,13 @@ from tkinter import filedialog
 from os import listdir
 import sys
 from cvengine import edge as im
-from .db import DATABASE
+from .db import DB
+
 
 class MenuView(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
+        self.db = DB()
         self.master = master
         self.grid()
         self.create_widgets()
@@ -17,13 +19,11 @@ class MenuView(tk.Frame):
         self.master.set_board_view(image_path)
 
     def get_nums(self):
-        nums = DATABASE.get_numbers()
-        print(nums)
+        nums = self.db.db.get_numbers()
         self.master.set_db_view(nums)
 
     def get_syms(self):
-        syms = DATABASE.get_symbols()
-        print(syms)
+        syms = self.db.db.get_symbols()
         self.master.set_db_view(syms)
 
     def get_images_from_folder(self):
@@ -31,8 +31,6 @@ class MenuView(tk.Frame):
         images = [im.get_card(im.get(f'{path}/{x}'))
                 for x in listdir(path)
                 if x[-3:] == 'jpg']
-        for x in images:
-            print(x)
         self.master.set_card_scroller_view(images)
 
     def create_widgets(self):

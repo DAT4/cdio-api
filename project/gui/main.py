@@ -5,6 +5,7 @@ from .board import BoardView
 from .cardscroller import CardScollerView
 from .menu import MenuView
 from .dbview import DBView
+from . import db
 
 
 class Application(tk.Frame):

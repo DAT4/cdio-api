@@ -3,6 +3,7 @@ from itertools import chain
 from cvengine import edge as im
 from .components import ImageView
 from .cardscroller import CardScollerView
+from .db import DB
 
 def make_positions():
     def is_place(x,y): return y!=1 or x!=1 and x!=2
@@ -15,22 +16,22 @@ def make_positions():
 class BoardView(tk.Frame):
     def __init__(self, image_path, master=None):
         super().__init__(master)
-        self.images = im.split_board(im.get(image_path))
+        self.db = DB()
+        self.board = im.gamestate_from_board(self.db.db, im.get(image_path))
         self.master = master
         self.grid()
-        self.create_widgets(self.images)
+        self.create_widgets()
 
-    def scroll(self):
-        cards = [im.get_card(x) for x in self.images]
-        self.scroller = CardScollerView(stuff, master=self)
+    def scroll(self, cards):
+        self.scroller = CardScollerView(cards, master=self)
 
     def exit(self):
         self.master.set_menu_view()
 
-    def create_widgets(self, images):
-        self.cards = [ImageView(img,(150,250), pos, master=self)
-                for img,pos
-                in zip(im.cards_from_list(images), make_positions())]
+    def create_widgets(self):
+        self.cards = [ImageView(card.img,(150,250), pos, master=self)
+                for card,pos
+                in zip(list(self.board), make_positions())]
 
         self.btn_exit = tk.Button(self, text='exit', command=self.exit)
         self.btn_exit.grid(row=3, column=0, padx=5, pady=5)

@@ -12,7 +12,6 @@ class CornerObject:
     def find_value(self, others):
         lowest = 100
         out = ''
-        print([x.val for x in others])
         for obj in others:
             r = self.check_similarity(obj)
             if r < lowest:
