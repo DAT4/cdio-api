@@ -17,7 +17,6 @@ class CornerObject:
             if r < lowest:
                 lowest = r
                 out = obj.val
-        print(out)
         self.val = out
 
     def check_similarity(self, other):

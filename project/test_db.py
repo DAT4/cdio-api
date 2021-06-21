@@ -8,8 +8,7 @@ uri     = env['CDIO_MONGO_PASS']
 db      = MongoDB(uri)
 board   = im.get('resources/board.jpg')
 
-
-gamestate = GameState(db, board)
+gamestate = im.gamestate_from_board(db, board)
 
 jsonn = gamestate.json()
 
