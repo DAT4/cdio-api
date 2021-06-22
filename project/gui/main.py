@@ -30,9 +30,9 @@ class Application(tk.Frame):
         self.focus.destroy()
         self.focus = BoardView(image_path, master=self)
 
-    def set_card_scroller_view(self, images):
+    def set_card_scroller_view(self, cards):
         self.focus.destroy()
-        self.focus = CardScollerView(images, master=self)
+        self.focus = CardScollerView(cards, master=self)
 
 
 if __name__ == '__main__':
