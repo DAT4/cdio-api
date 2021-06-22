@@ -1,6 +1,7 @@
 import tkinter as tk
 from itertools import chain
-from cvengine import edge as im
+from cvengine import serializer as im
+from cvengine.edge import CVEngine
 from .components import ImageView
 from .cardscroller import CardScollerView
 from .db import DB
@@ -17,7 +18,8 @@ class BoardView(tk.Frame):
     def __init__(self, image_path, master=None):
         super().__init__(master)
         self.db = DB()
-        self.board = im.gamestate_from_board(self.db.db, im.get(image_path))
+        cv = CVEngine()
+        self.board = cv.gamestate_from_board(self.db.db, im.get(image_path))
         self.master = master
         self.grid()
         self.create_widgets()

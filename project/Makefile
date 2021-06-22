@@ -8,10 +8,14 @@ run:
 	python -m gui.main
 
 build:
-	sudo docker build -t cdio .
+	sudo docker build -t cdio ..
 
 deploy:
-	sudo docker build -t martinmaartensson/cdio .
+	sudo docker build -t martinmaartensson/cdio ..
+	sudo docker push martinmaartensson/cdio
 
-test:
+test-game:
+	python -m unittest tests.test_game > test_output.txt
+
+test-core:
 	python -m unittest tests.test_core > test_output.txt

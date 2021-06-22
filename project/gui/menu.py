@@ -2,7 +2,8 @@ import tkinter as tk
 from tkinter import filedialog
 from os import listdir
 import sys
-from cvengine import edge as im
+from cvengine.edge import CVEngine
+from cvengine import serializer as im
 from .db import DB
 
 
@@ -10,6 +11,7 @@ class MenuView(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.db = DB()
+        self.cv = CVEngine()
         self.master = master
         self.grid()
         self.create_widgets()
@@ -28,10 +30,10 @@ class MenuView(tk.Frame):
 
     def get_images_from_folder(self):
         path = tk.filedialog.askdirectory()
-        images = [im.get_card(im.get(f'{path}/{x}'))
+        cards = [self.cv.get_card(im.get(f'{path}/{x}'))
                 for x in listdir(path)
                 if x[-3:] == 'jpg']
-        self.master.set_card_scroller_view(images)
+        self.master.set_card_scroller_view(cards)
 
     def create_widgets(self):
         self.btn_load = tk.Button(self, text='load folder', command=self.get_images_from_folder)
